@@ -8,18 +8,103 @@
  * LogisticContract - перевозка металла, задержка 6000мс
  */
 import { Currency } from "../task_1";
-import { ISecureVaultRequisites } from "../task_3";
+import {ISecureVaultRequisites, Vault} from "../task_3";
+import {BankController} from "../task_5";
 
 export class SmartContract implements IContract{
+    public id: number;
+    public value: Currency;
+    public state: ContractState;
+    public sender: ISecureVaultRequisites;
+    public receiver: ISecureVaultRequisites;
 
+    constructor() {
+        this.state = ContractState.pending;
+    }
+
+    public signAndTransfer() {
+        this.state = ContractState.transfer;
+        const sender:Vault = new BankController().getVaultStore().find(x => x.id === this.sender.id);
+        const receiver:Vault = new BankController().getVaultStore().find(x => x.id === this.receiver.id);
+        setTimeout(() => {
+            if (!this.value || !this.sender || !this.receiver) {
+                this.rejectTransfer();
+            }
+            sender.transfer(this.value, receiver);
+            this.closeTransfer();
+        }, 3000)
+    }
+
+    public closeTransfer() {
+        this.state = ContractState.close;
+    }
+
+    public rejectTransfer() {
+        this.state = ContractState.rejected;
+    }
 }
 
 export class BankingContract implements IContract{
+    public id: number;
+    public value: Currency;
+    public state: ContractState;
+    public sender: ISecureVaultRequisites;
+    public receiver: ISecureVaultRequisites;
 
+    constructor() {
+        this.state = ContractState.pending;
+    }
+
+    public signAndTransfer() {
+        const sender:Vault = new BankController().getVaultStore().find(x => x.id === this.sender.id);
+        const receiver:Vault = new BankController().getVaultStore().find(x => x.id === this.receiver.id);
+        if (!this.value || !this.sender || !this.receiver) {
+            this.rejectTransfer();
+        }
+        sender.transfer(this.value, receiver);
+        this.closeTransfer();
+    }
+
+    public closeTransfer() {
+        this.state = ContractState.close;
+    }
+
+    public rejectTransfer() {
+        this.state = ContractState.rejected;
+    }
 }
 
 export class LogisticContract implements IContract{
+    public id: number;
+    public value: Currency;
+    public state: ContractState;
+    public sender: ISecureVaultRequisites;
+    public receiver: ISecureVaultRequisites;
 
+    constructor() {
+        this.state = ContractState.pending;
+    }
+
+    public signAndTransfer() {
+        this.state = ContractState.transfer;
+        const sender:Vault = new BankController().getVaultStore().find(x => x.id === this.sender.id);
+        const receiver:Vault = new BankController().getVaultStore().find(x => x.id === this.receiver.id);
+        setTimeout(() => {
+            if (!this.value || !this.sender || !this.receiver) {
+                this.rejectTransfer();
+            }
+            sender.transfer(this.value, receiver);
+            this.closeTransfer();
+        }, 6000)
+    }
+
+    public closeTransfer() {
+        this.state = ContractState.close;
+    }
+
+    public rejectTransfer() {
+        this.state = ContractState.rejected;
+    }
 }
 
 

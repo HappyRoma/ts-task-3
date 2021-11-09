@@ -11,17 +11,21 @@ export class Currency{
     public name: string;
     public value: number;
     public unit: string;
+    public type: CurrencyType;
 
-    constructor(name: string, value: number, unit: string) {
+    constructor(name: string, value: number, unit: string, type?: CurrencyType) {
         if (name === '' || name === undefined || value < 0 || unit === '' || unit === undefined) {
             throw new Error('wrong input');
         }
         this.name = name;
         this.value = value;
         this.unit = unit;
+        this.type = type;
     }
 }
 
 export enum CurrencyType {
-
+    "Material",
+    "Crypto",
+    "MetallDeposit"
 }
